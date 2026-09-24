@@ -27,6 +27,16 @@ export const strings = {
   legendWork: 'Dia de trabalho',
   legendOff: 'Folga',
   legendAnchor: 'Dia âncora',
+  legendVacation: 'Férias',
+  vacationDurationLabel: 'Duração das férias',
+  vacationDays10: '10 dias',
+  vacationDays15: '15 dias',
+  vacationDays20: '20 dias',
+  vacationDays30: '30 dias',
+  vacationModeLabel: 'Modo férias (clique no calendário para marcar)',
+  clearVacations: 'Limpar férias',
+  instructionVacationMode:
+    'Modo férias ativo: clique em um dia para marcar o início das férias.',
 };
 
 export function formatAnchorSummaryThreeByThree(anchorDate, nextOffStart) {

@@ -7,6 +7,7 @@ import {
   isWorkingDay,
   normalizeToLocalDay,
 } from "../utils/schedulePattern";
+import { isVacationDay } from "../utils/vacation";
 
 function WorkScheduleCalendar({
   scheduleType,
@@ -14,8 +15,12 @@ function WorkScheduleCalendar({
   anchorDate,
   anchorDateTime,
   selectedDate,
+  vacationPeriods,
+  vacationMode,
+  vacationDuration,
   onAnchorChange,
   onSelectedDateChange,
+  onVacationAdd,
 }) {
   const scheduleContext = {
     scheduleType,
@@ -26,9 +31,15 @@ function WorkScheduleCalendar({
 
   function handleDayChange(date) {
     const day = normalizeToLocalDay(date);
+    onSelectedDateChange(day);
+
+    if (vacationMode) {
+      onVacationAdd(day, vacationDuration);
+      return;
+    }
+
     const dateTime = buildAnchorDateTime(day, shiftStartTime);
     onAnchorChange(day, dateTime);
-    onSelectedDateChange(day);
   }
 
   return (
@@ -43,9 +54,12 @@ function WorkScheduleCalendar({
           return null;
         }
 
-        const statusClass = isWorkingDay(date, scheduleContext)
-          ? "tile-work"
-          : "tile-off";
+        const onVacation = isVacationDay(date, vacationPeriods);
+        const statusClass = onVacation
+          ? "tile-vacation"
+          : isWorkingDay(date, scheduleContext)
+            ? "tile-work"
+            : "tile-off";
         const anchorClass = isAnchorDay(date, anchorDate) ? "tile-anchor" : "";
 
         return [statusClass, anchorClass].filter(Boolean).join(" ");
