@@ -1,20 +1,12 @@
-import { differenceInCalendarDays, normalizeToLocalDay } from './schedulePattern';
+import {
+  differenceInCalendarDays,
+  formatLocalDateKey,
+  normalizeToLocalDay,
+  parseLocalDateKey,
+} from './schedulePattern';
 
 export const VACATION_DURATIONS = [10, 15, 20, 30];
 export const VACATION_STORAGE_KEY = 'workScheduleVacationPeriods';
-
-function formatLocalDateKey(date) {
-  const normalizedDate = normalizeToLocalDay(date);
-  const year = normalizedDate.getFullYear();
-  const month = String(normalizedDate.getMonth() + 1).padStart(2, '0');
-  const day = String(normalizedDate.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-}
-
-function parseLocalDateKey(dateKey) {
-  const [year, month, day] = dateKey.split('-').map(Number);
-  return normalizeToLocalDay(new Date(year, month - 1, day));
-}
 
 function isValidVacationPeriod(period) {
   return (

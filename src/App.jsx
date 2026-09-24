@@ -11,9 +11,12 @@ import {
   buildAnchorDateTime,
   getNextOffBlockStart,
   getNextShiftStart,
-  normalizeToLocalDay,
   SCHEDULE_TYPES,
 } from "./utils/schedulePattern";
+import {
+  loadAnchorSettings,
+  saveAnchorSettings,
+} from "./utils/scheduleStorage";
 import {
   addVacationPeriod,
   loadVacationPeriods,
@@ -21,18 +24,22 @@ import {
 } from "./utils/vacation";
 
 function App() {
-  const today = normalizeToLocalDay(new Date());
   const defaultShiftStartTime = "07:00";
+  const initialAnchorSettings = loadAnchorSettings(defaultShiftStartTime);
 
   const [scheduleType, setScheduleType] = useState(
     SCHEDULE_TYPES.THREE_BY_THREE,
   );
-  const [shiftStartTime, setShiftStartTime] = useState(defaultShiftStartTime);
-  const [anchorDate, setAnchorDate] = useState(today);
-  const [anchorDateTime, setAnchorDateTime] = useState(
-    buildAnchorDateTime(today, defaultShiftStartTime),
+  const [shiftStartTime, setShiftStartTime] = useState(
+    initialAnchorSettings.shiftStartTime,
   );
-  const [selectedDate, setSelectedDate] = useState(today);
+  const [anchorDate, setAnchorDate] = useState(initialAnchorSettings.anchorDate);
+  const [anchorDateTime, setAnchorDateTime] = useState(
+    initialAnchorSettings.anchorDateTime,
+  );
+  const [selectedDate, setSelectedDate] = useState(
+    initialAnchorSettings.anchorDate,
+  );
   const [vacationDuration, setVacationDuration] = useState(10);
   const [vacationMode, setVacationMode] = useState(false);
   const [vacationPeriods, setVacationPeriods] = useState(() =>
@@ -42,6 +49,10 @@ function App() {
   useEffect(() => {
     saveVacationPeriods(vacationPeriods);
   }, [vacationPeriods]);
+
+  useEffect(() => {
+    saveAnchorSettings(anchorDate, shiftStartTime);
+  }, [anchorDate, shiftStartTime]);
 
   const scheduleContext = {
     scheduleType,

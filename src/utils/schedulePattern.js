@@ -17,6 +17,19 @@ export function normalizeToLocalDay(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
 
+export function formatLocalDateKey(date) {
+  const normalizedDate = normalizeToLocalDay(date);
+  const year = normalizedDate.getFullYear();
+  const month = String(normalizedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(normalizedDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+export function parseLocalDateKey(dateKey) {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return normalizeToLocalDay(new Date(year, month - 1, day));
+}
+
 export function isSameCalendarDay(firstDate, secondDate) {
   const normalizedFirst = normalizeToLocalDay(firstDate);
   const normalizedSecond = normalizeToLocalDay(secondDate);
