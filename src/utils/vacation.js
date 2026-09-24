@@ -1,0 +1,80 @@
+import { differenceInCalendarDays, normalizeToLocalDay } from './schedulePattern';
+
+export const VACATION_DURATIONS = [10, 15, 20, 30];
+export const VACATION_STORAGE_KEY = 'workScheduleVacationPeriods';
+
+function formatLocalDateKey(date) {
+  const normalizedDate = normalizeToLocalDay(date);
+  const year = normalizedDate.getFullYear();
+  const month = String(normalizedDate.getMonth() + 1).padStart(2, '0');
+  const day = String(normalizedDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function parseLocalDateKey(dateKey) {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return normalizeToLocalDay(new Date(year, month - 1, day));
+}
+
+function isValidVacationPeriod(period) {
+  return (
+    period &&
+    typeof period.start === 'string' &&
+    typeof period.duration === 'number' &&
+    VACATION_DURATIONS.includes(period.duration)
+  );
+}
+
+export function serializeVacationPeriods(vacationPeriods) {
+  return vacationPeriods.map(({ start, duration }) => ({
+    start: formatLocalDateKey(start),
+    duration,
+  }));
+}
+
+export function parseVacationPeriods(storedPeriods) {
+  if (!Array.isArray(storedPeriods)) {
+    return [];
+  }
+
+  return storedPeriods
+    .filter(isValidVacationPeriod)
+    .map(({ start, duration }) => ({
+      start: parseLocalDateKey(start),
+      duration,
+    }));
+}
+
+export function loadVacationPeriods() {
+  try {
+    const storedValue = localStorage.getItem(VACATION_STORAGE_KEY);
+    if (!storedValue) {
+      return [];
+    }
+
+    return parseVacationPeriods(JSON.parse(storedValue));
+  } catch {
+    return [];
+  }
+}
+
+export function saveVacationPeriods(vacationPeriods) {
+  localStorage.setItem(
+    VACATION_STORAGE_KEY,
+    JSON.stringify(serializeVacationPeriods(vacationPeriods)),
+  );
+}
+
+export function isVacationDay(date, vacationPeriods) {
+  const normalizedDate = normalizeToLocalDay(date);
+
+  return vacationPeriods.some(({ start, duration }) => {
+    const normalizedStart = normalizeToLocalDay(start);
+    const dayOffset = differenceInCalendarDays(normalizedDate, normalizedStart);
+    return dayOffset >= 0 && dayOffset < duration;
+  });
+}
+
+export function addVacationPeriod(vacationPeriods, startDate, duration) {
+  return [...vacationPeriods, { start: normalizeToLocalDay(startDate), duration }];
+}
