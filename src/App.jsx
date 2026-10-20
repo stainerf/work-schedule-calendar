@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
+import CalendarPdfPrintButton from "./components/CalendarPdfPrintButton";
+import CalendarViewSelector from "./components/CalendarViewSelector";
+import FullYearScheduleCalendar from "./components/FullYearScheduleCalendar";
 import ScheduleTypeSelector from "./components/ScheduleTypeSelector";
 import VacationControls from "./components/VacationControls";
 import WorkScheduleCalendar from "./components/WorkScheduleCalendar";
+import { CALENDAR_VIEW_MODES } from "./utils/calendarView";
 import {
   formatAnchorSummaryThreeByThree,
   formatAnchorSummaryTwelveByThirtySix,
@@ -44,6 +48,20 @@ function App() {
   const [vacationMode, setVacationMode] = useState(false);
   const [vacationPeriods, setVacationPeriods] = useState(() =>
     loadVacationPeriods(),
+  );
+  const [calendarViewMode, setCalendarViewMode] = useState(
+    CALENDAR_VIEW_MODES.MONTH,
+  );
+  const [visibleMonthDate, setVisibleMonthDate] = useState(
+    () =>
+      new Date(
+        initialAnchorSettings.anchorDate.getFullYear(),
+        initialAnchorSettings.anchorDate.getMonth(),
+        1,
+      ),
+  );
+  const [displayYear, setDisplayYear] = useState(() =>
+    initialAnchorSettings.anchorDate.getFullYear(),
   );
 
   useEffect(() => {
@@ -103,8 +121,10 @@ function App() {
     setVacationPeriods([]);
   }
 
+  const isFullYearView = calendarViewMode === CALENDAR_VIEW_MODES.YEAR;
+
   return (
-    <main className="app">
+    <main className={`app${isFullYearView ? " app-full-year" : ""}`}>
       <header className="app-header">
         <h1>{strings.appTitle}</h1>
         <p className="instruction">{instruction}</p>
@@ -126,19 +146,55 @@ function App() {
           hasVacations={vacationPeriods.length > 0}
         />
 
-        <WorkScheduleCalendar
-          scheduleType={scheduleType}
-          shiftStartTime={shiftStartTime}
-          anchorDate={anchorDate}
-          anchorDateTime={anchorDateTime}
-          selectedDate={selectedDate}
-          vacationPeriods={vacationPeriods}
-          vacationMode={vacationMode}
-          vacationDuration={vacationDuration}
-          onAnchorChange={handleAnchorChange}
-          onSelectedDateChange={setSelectedDate}
-          onVacationAdd={handleVacationAdd}
-        />
+        <div className="calendar-toolbar">
+          <CalendarViewSelector
+            calendarViewMode={calendarViewMode}
+            onCalendarViewModeChange={setCalendarViewMode}
+          />
+          <CalendarPdfPrintButton
+            calendarViewMode={calendarViewMode}
+            visibleMonthDate={visibleMonthDate}
+            displayYear={displayYear}
+            scheduleContext={scheduleContext}
+            vacationPeriods={vacationPeriods}
+            anchorDate={anchorDate}
+            summaryText={summary}
+          />
+        </div>
+
+        {isFullYearView ? (
+          <FullYearScheduleCalendar
+            scheduleType={scheduleType}
+            shiftStartTime={shiftStartTime}
+            anchorDate={anchorDate}
+            anchorDateTime={anchorDateTime}
+            selectedDate={selectedDate}
+            displayYear={displayYear}
+            vacationPeriods={vacationPeriods}
+            vacationMode={vacationMode}
+            vacationDuration={vacationDuration}
+            onDisplayYearChange={setDisplayYear}
+            onAnchorChange={handleAnchorChange}
+            onSelectedDateChange={setSelectedDate}
+            onVacationAdd={handleVacationAdd}
+          />
+        ) : (
+          <WorkScheduleCalendar
+            scheduleType={scheduleType}
+            shiftStartTime={shiftStartTime}
+            anchorDate={anchorDate}
+            anchorDateTime={anchorDateTime}
+            selectedDate={selectedDate}
+            visibleMonthDate={visibleMonthDate}
+            vacationPeriods={vacationPeriods}
+            vacationMode={vacationMode}
+            vacationDuration={vacationDuration}
+            onVisibleMonthDateChange={setVisibleMonthDate}
+            onAnchorChange={handleAnchorChange}
+            onSelectedDateChange={setSelectedDate}
+            onVacationAdd={handleVacationAdd}
+          />
+        )}
       </div>
 
       <p className="summary">{summary}</p>

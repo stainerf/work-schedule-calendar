@@ -20,6 +20,14 @@ export const strings = {
   scheduleThreeByThree: '3×3 (3 dias de trabalho, 3 de folga)',
   scheduleTwelveByThirtySix: '12×36 (12h de trabalho, 36h de folga)',
   shiftStartLabel: 'Início do plantão',
+  calendarViewLabel: 'Visualização do calendário',
+  calendarViewMonth: 'Mês',
+  calendarViewYear: 'Ano completo',
+  fullYearPrevious: 'Ano anterior',
+  fullYearNext: 'Próximo ano',
+  printPdfLabel: 'Imprimir PDF',
+  printPdfGenerating: 'Gerando PDF…',
+  printPdfError: 'Não foi possível gerar o PDF. Tente novamente.',
   instructionThreeByThree:
     'Clique em um dia para defini-lo como o primeiro dia de trabalho do ciclo 3×3.',
   instructionTwelveByThirtySix:
