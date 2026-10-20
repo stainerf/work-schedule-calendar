@@ -13,6 +13,8 @@ function WorkScheduleCalendar({
   anchorDate,
   anchorDateTime,
   selectedDate,
+  visibleMonthDate,
+  onVisibleMonthDateChange,
   vacationPeriods,
   vacationMode,
   vacationDuration,
@@ -43,6 +45,10 @@ function WorkScheduleCalendar({
   return (
     <Calendar
       value={selectedDate}
+      activeStartDate={visibleMonthDate}
+      onActiveStartDateChange={({ activeStartDate }) =>
+        onVisibleMonthDateChange(activeStartDate)
+      }
       onChange={handleDayChange}
       locale={ptBR}
       maxDetail="month"

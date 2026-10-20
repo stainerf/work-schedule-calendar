@@ -25,6 +25,9 @@ export const strings = {
   calendarViewYear: 'Ano completo',
   fullYearPrevious: 'Ano anterior',
   fullYearNext: 'Próximo ano',
+  printPdfLabel: 'Imprimir PDF',
+  printPdfGenerating: 'Gerando PDF…',
+  printPdfError: 'Não foi possível gerar o PDF. Tente novamente.',
   instructionThreeByThree:
     'Clique em um dia para defini-lo como o primeiro dia de trabalho do ciclo 3×3.',
   instructionTwelveByThirtySix:

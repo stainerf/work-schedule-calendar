@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { strings } from '../i18n/strings';
 import { getScheduleDayTileClassName } from '../utils/calendarDayStyles';
 import {
@@ -15,6 +14,8 @@ function FullYearScheduleCalendar({
   anchorDate,
   anchorDateTime,
   selectedDate,
+  displayYear,
+  onDisplayYearChange,
   vacationPeriods,
   vacationMode,
   vacationDuration,
@@ -22,9 +23,6 @@ function FullYearScheduleCalendar({
   onSelectedDateChange,
   onVacationAdd,
 }) {
-  const [displayYear, setDisplayYear] = useState(() =>
-    selectedDate.getFullYear(),
-  );
   const weekdayLabels = getWeekdayLabels();
 
   const scheduleContext = {
@@ -36,7 +34,7 @@ function FullYearScheduleCalendar({
 
   function handleDaySelect(date) {
     const day = normalizeToLocalDay(date);
-    setDisplayYear(day.getFullYear());
+    onDisplayYearChange(day.getFullYear());
     onSelectedDateChange(day);
 
     if (vacationMode) {
@@ -49,11 +47,11 @@ function FullYearScheduleCalendar({
   }
 
   function handlePreviousYear() {
-    setDisplayYear((currentYear) => currentYear - 1);
+    onDisplayYearChange(displayYear - 1);
   }
 
   function handleNextYear() {
-    setDisplayYear((currentYear) => currentYear + 1);
+    onDisplayYearChange(displayYear + 1);
   }
 
   const today = normalizeToLocalDay(new Date());
