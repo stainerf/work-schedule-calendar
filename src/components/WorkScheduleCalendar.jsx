@@ -1,13 +1,11 @@
 import Calendar from "react-calendar";
 import { ptBR } from "date-fns/locale/pt-BR";
 import "react-calendar/dist/Calendar.css";
+import { getScheduleDayTileClassName } from "../utils/calendarDayStyles";
 import {
   buildAnchorDateTime,
-  isAnchorDay,
-  isWorkingDay,
   normalizeToLocalDay,
 } from "../utils/schedulePattern";
-import { isVacationDay } from "../utils/vacation";
 
 function WorkScheduleCalendar({
   scheduleType,
@@ -54,15 +52,12 @@ function WorkScheduleCalendar({
           return null;
         }
 
-        const onVacation = isVacationDay(date, vacationPeriods);
-        const statusClass = onVacation
-          ? "tile-vacation"
-          : isWorkingDay(date, scheduleContext)
-            ? "tile-work"
-            : "tile-off";
-        const anchorClass = isAnchorDay(date, anchorDate) ? "tile-anchor" : "";
-
-        return [statusClass, anchorClass].filter(Boolean).join(" ");
+        return getScheduleDayTileClassName(
+          date,
+          scheduleContext,
+          vacationPeriods,
+          anchorDate,
+        );
       }}
       formatShortWeekday={(_locale, date) =>
         date.toLocaleDateString("pt-BR", { weekday: "narrow" })
